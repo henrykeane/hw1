@@ -26,8 +26,9 @@ def get_shape(X: np.ndarray) -> Tuple[int, int]:
     n_samples : int
     n_features : int
     """
-    # TODO: replace with your implementation
-    raise NotImplementedError
+    n_samples = X.shape[0]
+    n_features = X.shape[1]
+    return n_samples, n_features
 
 
 def feature_histograms(X: np.ndarray, bins: int = 10) -> List[Tuple[np.ndarray, np.ndarray]]:
@@ -47,8 +48,12 @@ def feature_histograms(X: np.ndarray, bins: int = 10) -> List[Tuple[np.ndarray, 
         A list of length n_features, where each element is a tuple:
         (hist, bin_edges) as returned by np.histogram for that feature.
     """
-    # TODO: replace with your implementation
-    raise NotImplementedError
+
+    histograms = []
+    for i in range(X.shape[1]):
+        hist, bin_edges = np.histogram(X[:, i], bins=bins)
+        histograms.append((hist, bin_edges))
+    return histograms
 
 
 def compute_stats(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
@@ -67,8 +72,10 @@ def compute_stats(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     stds : np.ndarray
         1D array of shape (n_features,) with feature standard deviations.
     """
-    # TODO: replace with your implementation
-    raise NotImplementedError
+    n_samples, n_features = get_shape(X)
+    means = np.mean(X, axis=0)
+    stds = np.std(X, axis=0)
+    return means, stds
 
 
 def scatter_pairs(
@@ -98,8 +105,13 @@ def scatter_pairs(
         where points is an array of shape (n_points_in_class, 2)
         containing the selected feature values.
     """
-    # TODO: replace with your implementation
-    raise NotImplementedError
+    
+    result = {}
+    for (i, j) in feature_pairs:
+        result[(i, j)] = {}
+        for label in np.unique(y):
+            result[(i, j)][label] = X[y == label][:, [i, j]]
+    return result
 
 
 def _load_iris() -> Tuple[np.ndarray, np.ndarray]:
@@ -159,8 +171,10 @@ def main(argv: List[str] = None) -> int:
     try:
         result = scatter_pairs(X, y)
         print(f"scatter_pairs: prepared {len(result)} feature pair groups")
-    except NotImplementedError:
-        print("scatter_pairs: NotImplemented")
+    except NotImplementedError as e:
+        print(f"scatter_pairs: NotImplemented - {e}")
+    except Exception as e:
+        print(f"scatter_pairs: Error - {type(e).__name__}: {e}")
 
     return 0
 
